@@ -23,7 +23,7 @@ databaseChangeLog:
                     uniqueConstraintName: uq_items_name
               - column:
                   name: price
-                  type: DECIMAL(10,2)
+                  type: double precision
                   constraints:
                     nullable: false
 

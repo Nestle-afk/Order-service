@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/V1/002-create-orders-table.yaml
   - include:
       file: db/changelog/V1/003-create-order-items-table.yaml
+  - include:
+      file: db/changelog/V2/004-add-status-check-constraint.yaml
