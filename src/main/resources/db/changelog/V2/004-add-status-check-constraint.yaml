@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-add-status-check-constraint
+      author: arca9
+      changes:
+        - sql:
+            sql: ALTER TABLE orders ADD CONSTRAINT status_check CHECK (status IN ('IN_PROGRESS', 'COMPLETED', 'FAILED'));
+
