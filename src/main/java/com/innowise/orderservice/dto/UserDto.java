@@ -1,10 +1,13 @@
 package com.innowise.orderservice.dto;
 
 import java.time.LocalDate;
+
+import lombok.Builder;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
+@Builder
 public class UserDto {
     private Long id;
     private String name;
