@@ -15,7 +15,7 @@ import java.util.List;
 public class OrderDto {
     private Long id;
 
-    @NotBlank(message = "Status cannot be blank")
+    @NotNull(message = "Status cannot be blank")
     private OrderStatus status;
 
     @PositiveOrZero(message = "Total amount must be positive or zero")

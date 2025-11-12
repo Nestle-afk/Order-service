@@ -11,10 +11,16 @@ import java.util.List;
 public interface OrderItemMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "order", source = "order")
+    @Mapping(target = "order", expression = "java(order)")
     @Mapping(target = "item", source = "dto")
     @Mapping(target = "quantity", source = "dto.quantity")
     OrderItem toEntity(ItemDto dto, @Context Order order);
 
+    @IterableMapping(qualifiedByName = "toEntityWithOrder")
     List<OrderItem> toEntityList(List<ItemDto> dtos, @Context Order order);
+
+    @Named("toEntityWithOrder")
+    default OrderItem mapWithOrder(ItemDto dto, @Context Order order) {
+        return toEntity(dto, order);
+    }
 }

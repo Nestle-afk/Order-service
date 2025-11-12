@@ -5,6 +5,7 @@ import com.innowise.orderservice.dto.OrderDto;
 import com.innowise.orderservice.mapper.OrderItemMapper;
 import com.innowise.orderservice.mapper.OrderMapper;
 import com.innowise.orderservice.model.Order;
+import com.innowise.orderservice.model.OrderItem;
 import com.innowise.orderservice.model.OrderStatus;
 import com.innowise.orderservice.repository.OrderRepository;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +50,8 @@ public class OrderService {
     @Transactional
     public OrderDto createOrder(OrderDto dto) {
         Order order = orderMapper.toEntity(dto);
+        order.setCreationDate(LocalDateTime.now());
+
         Order saved = repository.save(order);
         return orderMapper.toDto(saved)
                 .withUser(userClient.getUserById(saved.getUserId()));
@@ -59,7 +63,8 @@ public class OrderService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
 
         current.setStatus(dto.getStatus());
-        current.setOrderItems(orderItemMapper.toEntityList(dto.getItems(), current));
+        List<OrderItem> newItems = orderItemMapper.toEntityList(dto.getItems(), current);
+        current.getOrderItems().addAll(newItems);
 
         Order updated = repository.save(current);
         return orderMapper.toDto(updated)

@@ -31,7 +31,7 @@ public class Order {
     @Column(nullable = false, length = 50)
     private OrderStatus status;
 
-    @Column(name = "creation_date", nullable = false)
+    @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDateTime creationDate;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
