@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-order-items-table
+      author: arca9
+      changes:
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_order_items
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: item_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: order_items
+            baseColumnNames: order_id
+            constraintName: fk_order_items_orders
+            referencedTableName: orders
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: order_items
+            baseColumnNames: item_id
+            constraintName: fk_order_items_items
+            referencedTableName: items
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+        - createIndex:
+            tableName: order_items
+            indexName: idx_order_items_order_id
+            columns:
+              - column:
+                  name: order_id
+
+        - createIndex:
+            tableName: order_items
+            indexName: idx_order_items_item_id
+            columns:
+              - column:
+                  name: item_id
