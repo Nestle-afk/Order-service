@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/orders_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+  liquibase:
+    enabled: true
+    drop-first: true
+
+user-service:
+  url: http://localhost:8001/api/users
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userClient:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.innowise.orderservice.client: DEBUG
+
