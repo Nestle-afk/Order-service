@@ -22,10 +22,10 @@
         <java.version>21</java.version>
         <org.apache.commons.version>3.18.0</org.apache.commons.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <sonar.organization>nestle-afk</sonar.organization>
     </properties>
 
     <dependencies>
-        <!-- Spring Boot & JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -43,7 +43,6 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -60,7 +59,6 @@
             <version>1.21</version>
         </dependency>
 
-        <!-- Lombok & MapStruct -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -78,7 +76,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -103,7 +100,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- WireMock (новый артефакт) -->
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock-standalone</artifactId>
@@ -118,8 +114,6 @@
             <scope>test</scope>
         </dependency>
 
-
-        <!-- Resilience4j -->
         <dependency>
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-spring-boot3</artifactId>
@@ -131,7 +125,6 @@
             <version>2.2.0</version>
         </dependency>
 
-        <!-- Devtools & Docker Compose (optional) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
