@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/orders_db
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://localhost:5433/auth_db
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 30000
@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -18,7 +18,7 @@ spring:
 
   liquibase:
     enabled: true
-    drop-first: true
+    drop-first: false
 
 user-service:
   url: http://localhost:8001/api/users
