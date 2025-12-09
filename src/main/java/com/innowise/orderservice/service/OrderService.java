@@ -1,6 +1,7 @@
 package com.innowise.orderservice.service;
 
 import com.innowise.orderservice.client.UserClient;
+import com.innowise.orderservice.dto.CreateOrderEvent;
 import com.innowise.orderservice.dto.OrderDto;
 import com.innowise.orderservice.mapper.OrderItemMapper;
 import com.innowise.orderservice.mapper.OrderMapper;
@@ -8,7 +9,9 @@ import com.innowise.orderservice.model.Order;
 import com.innowise.orderservice.model.OrderItem;
 import com.innowise.orderservice.model.OrderStatus;
 import com.innowise.orderservice.repository.OrderRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,19 +21,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class OrderService {
 
     public final UserClient userClient;
     public final OrderRepository repository;
     public final OrderMapper orderMapper;
-
     public final OrderItemMapper orderItemMapper;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private static final String CREATE_ORDER_TOPIC = "create-order-topic";
 
-    public OrderService(UserClient userClient, OrderRepository repository, OrderMapper orderMapper, OrderItemMapper orderItemMapper) {
+    public OrderService(UserClient userClient, OrderRepository repository, OrderMapper orderMapper, 
+                       OrderItemMapper orderItemMapper, KafkaTemplate<String, Object> kafkaTemplate) {
         this.userClient = userClient;
         this.repository = repository;
         this.orderMapper = orderMapper;
         this.orderItemMapper = orderItemMapper;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public OrderDto getOrder(Long id){
@@ -52,9 +59,31 @@ public class OrderService {
         Order order = orderMapper.toEntity(dto);
         order.setCreationDate(LocalDateTime.now());
 
+        Double totalAmount = dto.getTotalAmount();
+        if (totalAmount == null && dto.getItems() != null) {
+            totalAmount = dto.getItems().stream()
+                    .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                    .sum();
+        }
+
         Order saved = repository.save(order);
-        return orderMapper.toDto(saved)
+        OrderDto savedDto = orderMapper.toDto(saved)
                 .withUser(userClient.getUserById(saved.getUserId()));
+
+        CreateOrderEvent event = new CreateOrderEvent(
+                saved.getId(),
+                saved.getUserId(),
+                totalAmount != null ? totalAmount : 0.0
+        );
+
+        try {
+            kafkaTemplate.send(CREATE_ORDER_TOPIC, event);
+            log.info("CREATE_ORDER event sent for order ID: {}", saved.getId());
+        } catch (Exception e) {
+            log.error("Failed to send CREATE_ORDER event for order ID: {}", saved.getId(), e);
+        }
+
+        return savedDto;
     }
 
     @Transactional

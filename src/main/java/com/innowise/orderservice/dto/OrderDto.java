@@ -15,6 +15,10 @@ import java.util.List;
 public class OrderDto {
     private Long id;
 
+    @NotNull(message = "User ID cannot be null")
+    @Positive(message = "User ID must be positive")
+    private Long userId;
+
     @NotNull(message = "Status cannot be blank")
     private OrderStatus status;
 
